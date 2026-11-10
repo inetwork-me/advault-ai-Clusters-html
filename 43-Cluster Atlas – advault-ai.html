@@ -72,9 +72,635 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 /* Hero description in white */
 .atlas-hero .atlas-hero__lead{color:#fff;}
 </style>
-<link rel="stylesheet" id="atlas-card-colors-css" href="atlas-card-colors.css" media="all" />
-<link rel="stylesheet" id="atlas-flow-css" href="atlas-flow.css" media="all" />
-<link rel="stylesheet" id="atlas-motion-css" href="atlas-motion.css" media="all" />
+<style id="atlas-card-colors-css">
+/* ==========================================================================
+   Cluster Atlas — per-category colours for the 8 intelligence cluster cards.
+   Load AFTER cluster-atlas.css. Colour only: no layout/size/type changes.
+   --cat       base hue
+   --cat-deep  darker shade of the same hue (gradient start)
+   ========================================================================== */
+
+.atlas-lp a.atlas-window[href*="consumer-markets-commerce"]      { --cat: #E6A34D; --cat-deep: #9A6420; } /* warm amber  */
+.atlas-lp a.atlas-window[href*="health-care-life-sciences"]      { --cat: #65B98A; --cat-deep: #2F7A52; } /* fresh green */
+.atlas-lp a.atlas-window[href*="technology-connected"]           { --cat: #8B7CF6; --cat-deep: #5546C8; } /* violet      */
+.atlas-lp a.atlas-window[href*="enterprise-finance-risk"]        { --cat: #438FE8; --cat-deep: #1F5FAE; } /* blue        */
+.atlas-lp a.atlas-window[href*="industry-energy-resources"]      { --cat: #D47CB6; --cat-deep: #974078; } /* rose        */
+.atlas-lp a.atlas-window[href*="mobility-logistics-places"]      { --cat: #E77F78; --cat-deep: #AE4740; } /* coral       */
+.atlas-lp a.atlas-window[href*="culture-media-experiences"]      { --cat: #D47CB6; --cat-deep: #974078; } /* pink        */
+.atlas-lp a.atlas-window[href*="agriculture-animals-production"] { --cat: #85AD62; --cat-deep: #4F6E32; } /* olive green */
+
+/* Header: one clean diagonal gradient in the card's own hue
+   (replaces the dark-teal header fill; no overlay layer). */
+.atlas-lp .atlas-window__media {
+  background: linear-gradient(135deg, var(--cat-deep) 0%, var(--cat) 100%);
+}
+.atlas-lp .atlas-window__art { color: #fff; }
+
+/* Icon square: solid category colour, white icon */
+.atlas-lp .atlas-window__badge {
+  background: linear-gradient(135deg, var(--cat) 0%, var(--cat-deep) 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.atlas-lp .atlas-window__art .atlas-ico,
+.atlas-lp .atlas-window__badge .atlas-ico { stroke: currentColor; }
+
+/* ==========================================================================
+   Hero "Built for" list — same treatment: coloured plate, white icon
+   ========================================================================== */
+.atlas-lp .atlas-built li:nth-child(1) { --cat: #E6A34D; --cat-deep: #9A6420; } /* Performance Marketers      — amber  */
+.atlas-lp .atlas-built li:nth-child(2) { --cat: #8B7CF6; --cat-deep: #5546C8; } /* SaaS Founders & Developers — violet */
+.atlas-lp .atlas-built li:nth-child(3) { --cat: #D47CB6; --cat-deep: #974078; } /* Brands & Marketing Teams   — pink   */
+.atlas-lp .atlas-built li:nth-child(4) { --cat: #438FE8; --cat-deep: #1F5FAE; } /* Advertising Agencies       — blue   */
+.atlas-lp .atlas-built li:nth-child(5) { --cat: #65B98A; --cat-deep: #2F7A52; } /* Consultants & Freelancers  — green  */
+
+.atlas-lp .atlas-built .icon-plate {
+  background: linear-gradient(135deg, var(--cat) 0%, var(--cat-deep) 100%);
+  border-color: transparent;
+  color: #fff;
+}
+.atlas-lp .atlas-built .icon-plate .atlas-ico { stroke: currentColor; }
+</style>
+<style id="atlas-flow-css">
+/* ==========================================================================
+   "From Market Discovery to Campaign Blueprint" — process section (.pf)
+   Own class names, so the theme's .atlas-flow rules don't interfere.
+   Desktop : 4-step timeline on a progress track + aligned benefits strip.
+   Tablet  : 2 columns, track hidden.   Mobile: 1 column.
+   Active step is driven by atlas-motion.js (.is-active / .is-done,
+   --pf-progress 0…1 on .pf).
+   ========================================================================== */
+
+.atlas-lp .pf {
+  --pf-disc: 64px;
+  --pf-gap: 24px;
+  --pf-pad: 14px;
+  --pf-brand: var(--atlas-brand, #0dbfc1);
+  --pf-brand-deep: var(--atlas-brand-hover, #0b757a);
+  --pf-ink: var(--atlas-heading, #081b1b);
+  --pf-muted: var(--atlas-body, #206d6e);
+  --pf-line: var(--atlas-line, #d6e9e9);
+  --pf-soft: var(--atlas-soft, #dff6f6);
+  --pf-progress: 0;
+  padding: 8px 0;
+}
+/* low-specificity list reset so it never overrides the component margins */
+:where(.atlas-lp .pf) :where(ol, ul) { list-style: none; margin: 0; padding: 0; }
+
+/* ---------- Intro ---------- */
+.atlas-lp .pf__intro {
+  max-width: 720px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+.atlas-lp .pf__intro h2 {
+  margin: 0 0 10px;
+  color: var(--pf-ink);
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.atlas-lp .pf__intro p {
+  margin: 0;
+  color: var(--pf-muted);
+  font-size: 16px;
+}
+
+/* ---------- Steps ---------- */
+.atlas-lp .pf__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-gap);
+  padding: 0 var(--pf-pad);
+}
+.atlas-lp .pf__step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  cursor: default;
+}
+.atlas-lp .pf__disc {
+  display: grid;
+  place-items: center;
+  width: var(--pf-disc);
+  height: var(--pf-disc);
+  margin-bottom: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--pf-line);
+  background: #fff;
+  color: var(--pf-brand-deep);
+  box-shadow: 0 0 0 6px #fff;            /* masks the track behind the disc */
+  transition: background .4s ease, color .4s ease, border-color .4s ease, scale .25s ease;
+}
+.atlas-lp .pf__disc .atlas-ico { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.atlas-lp .pf__num {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--pf-soft);
+  color: var(--pf-brand-deep);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 1.5;
+  transition: background .4s ease, color .4s ease;
+}
+.atlas-lp .pf__title {
+  color: var(--pf-ink);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.atlas-lp .pf__text {
+  max-width: 230px;
+  color: var(--pf-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Track: centre of step 1 → centre of step 4; fill scales to active step */
+.atlas-lp .pf__track {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--pf-disc) / 2 - 2px);
+  left:  calc(var(--pf-pad) + (100% - 2 * var(--pf-pad) - 3 * var(--pf-gap)) / 8);
+  right: calc(var(--pf-pad) + (100% - 2 * var(--pf-pad) - 3 * var(--pf-gap)) / 8);
+  height: 4px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(90deg, var(--pf-line) 0 8px, transparent 8px 14px);
+  transform-origin: left center;
+  transition: transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+.atlas-lp .pf__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* the line shifts colour from step to step */
+  background: linear-gradient(90deg, #E6A34D 0%, #8B7CF6 33.3%, #438FE8 66.6%, #65B98A 100%);
+  /* revealed (not squeezed) so each colour stays under its own step */
+  clip-path: inset(0 calc(100% - var(--pf-progress) * 100%) 0 0 round 4px);
+  /* constant speed so the fill reaches each step exactly as it loads */
+  transition: clip-path var(--pf-fill-dur, 2.7s) linear;
+}
+.am-ready .atlas-lp .pf:not(.am-flow-in) .pf__track { transform: scaleX(0); }
+
+/* ---------- Per-step colour (step + its benefit share it) ----------
+   01 amber/orange · 02 violet · 03 blue · 04 green  (AdVault palette)
+   --pf-brand = base hue, --pf-brand-deep = darker shade (text on white,
+   gradient end), --pf-soft = light tint. */
+.atlas-lp .pf [data-pf-i="0"] { --pf-brand: #E6A34D; --pf-brand-deep: #9A6420; }
+.atlas-lp .pf [data-pf-i="1"] { --pf-brand: #8B7CF6; --pf-brand-deep: #5546C8; }
+.atlas-lp .pf [data-pf-i="2"] { --pf-brand: #438FE8; --pf-brand-deep: #1F5FAE; }
+.atlas-lp .pf [data-pf-i="3"] { --pf-brand: #65B98A; --pf-brand-deep: #2F7A52; }
+.atlas-lp .pf [data-pf-i] { --pf-soft: color-mix(in srgb, var(--pf-brand) 14%, #fff); }
+
+/* idle step already hints its colour */
+.atlas-lp .pf__step .pf__disc { border-color: color-mix(in srgb, var(--pf-brand) 35%, #fff); }
+
+/* Loaded (done) + loading (active) states — loaded steps stay filled */
+.atlas-lp .pf__step.is-done .pf__disc {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pf-brand) 0%, var(--pf-brand-deep) 100%);
+  color: #fff;
+}
+.atlas-lp .pf__step.is-done .pf__num { background: var(--pf-brand-deep); color: #fff; }
+@keyframes pf-ring {
+  0%   { box-shadow: 0 0 0 6px #fff, 0 0 0 6px color-mix(in srgb, var(--pf-brand) 40%, transparent); }
+  100% { box-shadow: 0 0 0 6px #fff, 0 0 0 18px color-mix(in srgb, var(--pf-brand) 0%, transparent); }
+}
+.atlas-lp .pf__step.is-active .pf__disc {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pf-brand) 0%, var(--pf-brand-deep) 100%);
+  color: #fff;
+  animation: pf-ring 1.8s ease-out infinite;
+}
+.atlas-lp .pf__step.is-active .pf__num { background: var(--pf-brand-deep); color: #fff; }
+
+/* ---------- Benefits strip ---------- */
+.atlas-lp .pf__benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-gap);
+  margin-top: 44px;
+  padding: var(--pf-pad);
+  border: 1px solid var(--pf-line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f4fcfc 0%, var(--pf-soft) 100%);
+}
+.atlas-lp .pf__benefit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition: background .4s ease, border-color .4s ease, box-shadow .4s ease, translate .4s ease;
+}
+/* dashed connector from each step down into its benefit */
+.atlas-lp .pf__benefit::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(-44px - var(--pf-pad) + 8px);
+  height: 30px;
+  border-left: 2px dashed var(--pf-line);
+  transition: border-color .4s ease;
+}
+.atlas-lp .pf__bicon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--pf-brand-deep);
+  box-shadow: 0 4px 12px -6px rgba(8, 27, 27, .25);
+  transition: background .4s ease, color .4s ease;
+}
+.atlas-lp .pf__bicon .atlas-ico { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.atlas-lp .pf__btext { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.atlas-lp .pf__btext b {
+  color: var(--pf-brand-deep);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.atlas-lp .pf__btext span {
+  margin-top: 3px;
+  color: var(--pf-ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+/* a benefit lights up when its step has loaded, and stays lit */
+.atlas-lp .pf__benefit.is-active {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--pf-brand) 35%, #fff);
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--pf-brand-deep) 60%, transparent);
+}
+.atlas-lp .pf__benefit.is-active::before { border-color: var(--pf-brand); }
+.atlas-lp .pf__benefit.is-active .pf__bicon { background: var(--pf-brand); color: #fff; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1023px) {
+  .atlas-lp .pf__intro { margin-bottom: 36px; }
+  .atlas-lp .pf { --pf-row-gap: 32px; }
+  .atlas-lp .pf__steps,
+  .atlas-lp .pf__benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--pf-row-gap); }
+  .atlas-lp .pf__track,
+  .atlas-lp .pf__benefit::before { display: none; }
+  .atlas-lp .pf__benefits { row-gap: var(--pf-gap); }
+}
+/* ---------- Mobile ---------- */
+@media (max-width: 639px) {
+  .atlas-lp .pf { --pf-disc: 52px; }
+  .atlas-lp .pf__steps { grid-template-columns: minmax(0, 1fr); padding: 0; }
+  .atlas-lp .pf__step {
+    display: grid;
+    grid-template-columns: var(--pf-disc) 1fr;
+    column-gap: 16px;
+    row-gap: 4px;
+    align-items: start;
+    text-align: left;
+  }
+  .atlas-lp .pf__disc { grid-row: 1 / span 3; margin: 0; }
+  .atlas-lp .pf__num { justify-self: start; }
+
+  /* Vertical timeline: a segment from each icon down to the next icon.
+     ::after = dashed base line, ::before = colour fill that grows downward
+     while the step loads (same 0.9s as a step in atlas-motion.js). */
+  .atlas-lp .pf__step:not(:last-child)::after,
+  .atlas-lp .pf__step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: calc(var(--pf-disc) / 2 - 1.5px);
+    top: calc(var(--pf-disc) / 2);
+    width: 3px;
+    height: calc(100% + var(--pf-row-gap));
+    border-radius: 3px;
+  }
+  .atlas-lp .pf__step:not(:last-child)::after {
+    background: repeating-linear-gradient(180deg, var(--pf-line) 0 7px, transparent 7px 12px);
+  }
+  .atlas-lp .pf__step:not(:last-child)::before {
+    z-index: 0;
+    background: linear-gradient(180deg, var(--pf-brand), color-mix(in srgb, var(--pf-brand) 55%, #fff));
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform .9s linear;
+  }
+  .atlas-lp .pf__step.is-active:not(:last-child)::before,
+  .atlas-lp .pf__step.is-done:not(:last-child)::before { transform: none; }
+  /* keep the disc above its own fill segment */
+  .atlas-lp .pf__step .pf__disc { position: relative; z-index: 1; }
+  .atlas-lp .pf__text { max-width: none; }
+  .atlas-lp .pf__benefits { grid-template-columns: minmax(0, 1fr); margin-top: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-lp .pf__step.is-active .pf__disc { animation: none; }
+  .atlas-lp .pf__track, .atlas-lp .pf__fill, .atlas-lp .pf__step::before { transition: none; }
+}
+</style>
+<style id="atlas-motion-css">
+/* ==========================================================================
+   Cluster Atlas — motion & interaction layer
+   Pure behaviour: no layout, size, colour-palette or type changes.
+   - Entrance/reveal states only apply under html.am-ready, which is set in
+     <head> ONLY when the visitor has not requested reduced motion.
+   - Motion uses the individual `translate` / `scale` properties (plus
+     opacity) so it never fights the theme's own `transform` positioning.
+   ========================================================================== */
+
+:root {
+  --am-ease: cubic-bezier(.22, 1, .36, 1);      /* smooth ease-out */
+  --am-ease-io: cubic-bezier(.65, 0, .35, 1);   /* in-out for swaps */
+  --am-dist: 16px;
+  --am-focus: #13e5e7;                          /* theme --cyan */
+}
+@media (max-width: 767px) { :root { --am-dist: 10px; } }
+
+/* ---------- Keyframes ---------- */
+@keyframes am-up    { from { opacity: 0; translate: 0 var(--am-dist); } }
+@keyframes am-down  { from { opacity: 0; translate: 0 -10px; } }
+@keyframes am-text  { from { opacity: 0; filter: blur(6px); } }
+@keyframes am-scale { from { opacity: 0; scale: .96; } }
+@keyframes am-card  { from { opacity: 0; transform: translateY(14px); } }
+@keyframes am-shimmer { to { background-position: -200% 0; } }
+
+/* ==========================================================================
+   1. Page load sequence (hero) — CSS only, runs once
+   ========================================================================== */
+.am-ready .nav-bar                       { animation: am-down .5s var(--am-ease) backwards; }
+.am-ready .atlas-hero__copy > .eyebrow   { animation: am-up .6s var(--am-ease) .12s backwards; }
+.am-ready .atlas-hero h1 > span          { animation: am-text .75s var(--am-ease) backwards; }
+.am-ready .atlas-hero h1 > span:nth-child(1) { animation-delay: .2s; }
+.am-ready .atlas-hero h1 > span:nth-child(2) { animation-delay: .32s; }
+.am-ready .atlas-hero__lead              { animation: am-up .6s var(--am-ease) .45s backwards; }
+.am-ready .atlas-built > .eyebrow        { animation: am-up .5s var(--am-ease) .55s backwards; }
+.am-ready .atlas-built li                { animation: am-up .5s var(--am-ease) backwards; }
+.am-ready .atlas-built li:nth-child(1)   { animation-delay: .60s; }
+.am-ready .atlas-built li:nth-child(2)   { animation-delay: .67s; }
+.am-ready .atlas-built li:nth-child(3)   { animation-delay: .74s; }
+.am-ready .atlas-built li:nth-child(4)   { animation-delay: .81s; }
+.am-ready .atlas-built li:nth-child(5)   { animation-delay: .88s; }
+.am-ready .atlas-ctas > a                { animation: am-up .55s var(--am-ease) backwards; }
+.am-ready .atlas-ctas > a:nth-child(1)   { animation-delay: .98s; }
+.am-ready .atlas-ctas > a:nth-child(2)   { animation-delay: 1.06s; }
+.am-ready .atlas-globe .atlas-globe-real { animation: am-scale 1s var(--am-ease) .3s backwards; }
+/* callout already uses `translate` for its position → animate transform */
+.am-ready .atlas-globe .atlas-signal     { animation: am-card .7s var(--am-ease) 1.1s backwards; }
+
+/* ==========================================================================
+   2. Scroll reveals — JS adds .am-item, then .am-in once (never replays)
+   ========================================================================== */
+.am-ready .am-item {
+  opacity: 0;
+  translate: 0 var(--am-dist);
+  transition:
+    opacity .7s var(--am-ease) var(--am-delay, 0ms),
+    translate .7s var(--am-ease) var(--am-delay, 0ms),
+    scale .7s var(--am-ease) var(--am-delay, 0ms);
+}
+.am-ready .am-item.am-in { opacity: 1; translate: none; }
+.am-ready .am-item.am-done { --am-delay: 0ms; }
+
+/* Central hub: scale-up instead of slide */
+.am-ready .am-item.am-item--scale { translate: none; scale: .92; }
+.am-ready .am-item.am-item--scale.am-in { scale: none; }
+
+/* Connector wires: always visible (original dashed style kept). Endless
+   "data transfer" from the 43 hub out to each card:
+   - the original dashes drift outward (offset = one dash cycle, seamless)
+   - a bright packet in the target card's colour travels hub → card */
+@keyframes am-dash-flow   { to { stroke-dashoffset: calc(var(--am-dash-cycle, 8px) * -1); } }
+/* Continuous stream of round dots (zero-length dash + round cap = circle).
+   Shifting by exactly one spacing per cycle makes the loop seamless, so a
+   new dot leaves the hub every cycle while each dot travels slowly. */
+@keyframes am-packet-flow { to { stroke-dashoffset: calc(var(--am-dot-gap) * -1); } }
+.atlas-lp .atlas-wires line.am-dashed {
+  animation: am-dash-flow var(--am-dash-speed, .9s) linear infinite;
+}
+.atlas-lp .atlas-wires line.am-packet {
+  stroke: var(--am-pk-color, #13e5e7);
+  stroke-width: 8px;               /* = dot diameter */
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  --am-dot-gap: 56px;              /* distance between dots on a line   */
+  stroke-dasharray: 0.01px calc(var(--am-dot-gap) - 0.01px);
+  filter: drop-shadow(0 0 4px var(--am-pk-color, #13e5e7));
+  /* 56px every 1.6s ≈ 35px/s: slow, readable movement; a new dot every 1.6s.
+     Same timing on every line → all cards receive dots in sync. */
+  animation: am-packet-flow 1.6s linear infinite;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-lp .atlas-wires line.am-dashed { animation: none; }
+  .atlas-lp .atlas-wires line.am-packet { display: none; }
+}
+
+/* Cluster map (desktop): hub pops in, then cards emerge from behind it */
+:where(.am-ready .am-emerge .atlas-hub-cell) { position: relative; }
+.am-ready .am-emerge .atlas-hub-cell { z-index: 5; }   /* hub stays on top while cards pass under */
+.am-ready .am-emerge .atlas-hub {
+  opacity: 0; scale: .85;
+  transition: opacity .6s var(--am-ease), scale .7s var(--am-ease);
+}
+.am-ready .am-emerge.am-emerge-in .atlas-hub { opacity: 1; scale: none; }
+
+.am-ready .atlas-lp .am-emerge .atlas-window {
+  opacity: 0;
+  translate: var(--am-fx, 0) var(--am-fy, 0);
+  scale: .3;
+  transition:
+    opacity .45s ease var(--am-delay, 0ms),
+    translate 1s cubic-bezier(.16, 1, .3, 1) var(--am-delay, 0ms),
+    scale 1s cubic-bezier(.16, 1, .3, 1) var(--am-delay, 0ms),
+    box-shadow .25s var(--am-ease);
+}
+.am-ready .atlas-lp .am-emerge.am-emerge-in .atlas-window { opacity: 1; translate: none; scale: none; }
+.am-ready .atlas-lp .am-emerge.am-emerge-done .atlas-window {
+  transition: opacity .25s, translate .25s var(--am-ease), scale .25s var(--am-ease), box-shadow .25s var(--am-ease);
+}
+@media (hover: hover) and (pointer: fine) {
+  .am-ready .atlas-lp .am-emerge.am-emerge-done .atlas-window:hover { translate: 0 -4px; }
+}
+.am-ready .atlas-lp .am-emerge.am-emerge-done .atlas-window:active { translate: 0 -1px; }
+
+/* "Select a Cluster to Explore" panel: slides in from the right */
+.am-ready .atlas-explorer.am-item {
+  translate: 64px 0;
+  transition:
+    opacity .8s var(--am-ease) var(--am-delay, 0ms),
+    translate .9s cubic-bezier(.16, 1, .3, 1) var(--am-delay, 0ms);
+}
+.am-ready .atlas-explorer.am-item.am-in { translate: none; }
+@media (max-width: 767px) { .am-ready .atlas-explorer.am-item { translate: 32px 0; } }
+/* keep the off-screen start from causing a horizontal scrollbar */
+.am-ready .atlas-band { overflow-x: clip; }
+
+/* Process (.pf): each step's disc scales in just after the step itself */
+.am-ready .pf__step.am-item .pf__disc {
+  scale: .8; opacity: 0;
+  transition: scale .6s var(--am-ease) calc(var(--am-delay, 0ms) + 140ms),
+              opacity .6s var(--am-ease) calc(var(--am-delay, 0ms) + 140ms);
+}
+.am-ready .pf__step.am-in .pf__disc { scale: none; opacity: 1; }
+/* once revealed, state/hover changes must be immediate (drop reveal delays) */
+.am-ready .pf__step.am-done .pf__disc {
+  transition: scale .25s var(--am-ease), opacity .25s,
+              background .4s ease, color .4s ease, border-color .4s ease;
+}
+
+/* ==========================================================================
+   3. Cluster cards — hover, press, selected
+   ========================================================================== */
+.atlas-lp .atlas-window {
+  transition: box-shadow .25s var(--am-ease), translate .25s var(--am-ease);
+}
+.am-ready .atlas-lp .atlas-window.am-item {
+  transition:
+    opacity .7s var(--am-ease) var(--am-delay, 0ms),
+    translate .7s var(--am-ease) var(--am-delay, 0ms),
+    box-shadow .25s var(--am-ease);
+}
+.am-ready .atlas-lp .atlas-window.am-item.am-done {
+  transition: opacity .25s, translate .25s var(--am-ease), box-shadow .25s var(--am-ease);
+}
+.atlas-lp .atlas-window__media    { transition: filter .3s var(--am-ease); }
+.atlas-lp .atlas-window__art      { transition: scale .35s var(--am-ease); }
+.atlas-lp .atlas-window__badge    { transition: filter .25s var(--am-ease), scale .25s var(--am-ease); }
+.atlas-lp .atlas-window__go       { transition: translate .25s var(--am-ease); }
+
+@media (hover: hover) and (pointer: fine) {
+  .atlas-lp .atlas-window:hover,
+  .am-ready .atlas-lp .atlas-window.am-in:hover {
+    translate: 0 -4px;
+    box-shadow: 0 18px 40px -20px color-mix(in srgb, var(--cat, #0dbfc1) 70%, transparent),
+                0 6px 16px -10px rgba(3, 14, 14, .35);
+  }
+  .atlas-lp .atlas-window:hover .atlas-window__media { filter: saturate(1.15) brightness(1.08); }
+  .atlas-lp .atlas-window:hover .atlas-window__art   { scale: 1.06; }
+  .atlas-lp .atlas-window:hover .atlas-window__badge { filter: brightness(1.12); }
+  .atlas-lp .atlas-window:hover .atlas-window__go    { translate: 4px 0; }
+}
+.atlas-lp .atlas-window:active { translate: 0 -1px; transition-duration: .12s; }
+
+.atlas-lp .atlas-window.is-selected,
+.am-ready .atlas-lp .atlas-window.is-selected.am-in {
+  box-shadow: 0 0 0 2px var(--cat, #0dbfc1),
+              0 16px 36px -20px color-mix(in srgb, var(--cat, #0dbfc1) 75%, transparent);
+}
+
+/* ==========================================================================
+   4. Selected-cluster panel — content swap, feature stagger, image load
+   ========================================================================== */
+.atlas-explorer__cluster .atlas-chip,
+.atlas-explorer__cluster h2,
+.atlas-explorer__text {
+  transition: opacity .18s var(--am-ease-io), translate .18s var(--am-ease-io);
+}
+.atlas-explorer__cluster.am-out .atlas-chip,
+.atlas-explorer__cluster.am-out h2,
+.atlas-explorer__cluster.am-out .atlas-explorer__text {
+  opacity: 0; translate: 0 6px;
+}
+.atlas-explorer__cluster.am-swap-in .atlas-intel li { animation: am-up .45s var(--am-ease) backwards; }
+.atlas-explorer__cluster.am-swap-in .atlas-intel li:nth-child(2) { animation-delay: .05s; }
+.atlas-explorer__cluster.am-swap-in .atlas-intel li:nth-child(3) { animation-delay: .10s; }
+.atlas-explorer__cluster.am-swap-in .atlas-intel li:nth-child(4) { animation-delay: .15s; }
+
+/* Image: shimmer only while it is genuinely still loading, then fade in */
+.atlas-explorer__media.am-loading {
+  background: linear-gradient(90deg, #0a4b4b 0%, #126565 50%, #0a4b4b 100%) 0 0 / 200% 100%;
+  animation: am-shimmer 1.4s linear infinite;
+}
+.atlas-explorer__media img { transition: opacity .5s var(--am-ease); }
+.atlas-explorer__media.am-loading img { opacity: 0; }
+
+/* ==========================================================================
+   5. Hero micro-interactions
+   ========================================================================== */
+.atlas-built .icon-plate { transition: scale .25s var(--am-ease), box-shadow .25s var(--am-ease); }
+@media (hover: hover) and (pointer: fine) {
+  .atlas-built li:hover .icon-plate {
+    scale: 1.08;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--cat, #0dbfc1) 22%, transparent),
+                0 6px 18px -6px color-mix(in srgb, var(--cat, #0dbfc1) 70%, transparent);
+  }
+}
+
+/* ==========================================================================
+   6. Buttons (all existing btn styles keep their look)
+   ========================================================================== */
+.btn-primary, .btn-ghost, .btn-light {
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease,
+              box-shadow .2s ease, filter .2s ease, scale .15s var(--am-ease);
+}
+.btn-primary .atlas-ico, .btn-ghost .atlas-ico, .btn-light .atlas-ico,
+.btn-primary svg, .btn-ghost svg, .btn-light svg { transition: translate .22s var(--am-ease); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover .atlas-ico, .btn-ghost:hover .atlas-ico, .btn-light:hover .atlas-ico { translate: 3px 0; }
+  .btn-primary:hover { filter: brightness(1.06); box-shadow: 0 10px 28px -12px rgba(13, 191, 193, .65); }
+}
+.btn-primary:active, .btn-ghost:active, .btn-light:active { scale: .98; }
+
+/* ==========================================================================
+   7. Navigation
+   ========================================================================== */
+.nav-bar a, .nav-bar button, .dropdown-link, [data-submenu] a,
+footer a { transition: color .2s ease, background-color .2s ease, opacity .2s ease; }
+.nav-bar button[aria-haspopup] svg { transition: rotate .25s var(--am-ease); }
+.nav-bar button[aria-expanded="true"] svg { rotate: 180deg; }
+
+/* Dropdowns are toggled by the theme via Tailwind .hidden — animate both ways */
+[id^="clusterDropdown-"], [data-submenu] {
+  transition: opacity .2s var(--am-ease), translate .2s var(--am-ease),
+              display .2s allow-discrete;
+}
+[id^="clusterDropdown-"].hidden, [data-submenu].hidden { opacity: 0; translate: 0 -6px; }
+@starting-style {
+  [id^="clusterDropdown-"]:not(.hidden), [data-submenu]:not(.hidden) { opacity: 0; translate: 0 -6px; }
+}
+
+/* ==========================================================================
+   8. Process steps
+   ========================================================================== */
+/* Process step hover + states live in atlas-flow.css (.pf) */
+
+/* ==========================================================================
+   9. Keyboard focus — visible everywhere, only for keyboard users
+   ========================================================================== */
+.nav-bar a:focus-visible, .nav-bar button:focus-visible,
+.atlas-lp a:focus-visible, .atlas-lp button:focus-visible,
+footer a:focus-visible, .dropdown-link:focus-visible, [data-submenu] a:focus-visible {
+  outline: 2px solid var(--am-focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   10. Reduced motion — keep colour feedback, drop movement
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .atlas-lp .atlas-window:hover, .atlas-lp .atlas-window:active,
+  .atlas-built li:hover .icon-plate, .btn-primary:active, .btn-ghost:active, .btn-light:active,
+  .atlas-lp .atlas-window:hover .atlas-window__art, .atlas-lp .atlas-window:hover .atlas-window__go {
+    translate: none !important; scale: none !important;
+  }
+  .atlas-explorer__cluster.am-out .atlas-chip,
+  .atlas-explorer__cluster.am-out h2,
+  .atlas-explorer__cluster.am-out .atlas-explorer__text { translate: none; }
+}
+</style>
 <script>
 /* Enable entrance motion before first paint (skipped for reduced-motion).
    If the motion script never boots, reveal everything after 3.5s. */
@@ -1317,7 +1943,648 @@ More growth.</strong>
 <script id="advault_cluster_atlas-js" src="https://staging.advaultai.com/wp-content/themes/advault-ai/assets/js/cluster-atlas.js?ver=1793806749"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
-<script src="atlas-globe-real.js"></script>
-<script src="atlas-motion.js"></script>
+<script id="atlas-globe-real-js">
+/*
+ * Cluster Atlas — real-world globe
+ * Orthographic Earth (Natural Earth 110m land + country borders) with
+ * connected city nodes, raised great-circle arcs and travelling pulses.
+ * Needs d3 v7 and topojson-client v3 loaded first.
+ */
+(function () {
+  'use strict';
+
+  var WORLD_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json';
+
+  // [lon, lat]
+  var CITIES = {
+    nyc: [-74.0, 40.7], sf: [-122.4, 37.8], tor: [-79.4, 43.7], mex: [-99.1, 19.4],
+    sao: [-46.6, -23.5], bog: [-74.1, 4.7], lon: [-0.1, 51.5], par: [2.35, 48.85],
+    ber: [13.4, 52.5], mad: [-3.7, 40.4], lag: [3.4, 6.5], cai: [31.2, 30.0],
+    nbo: [36.8, -1.3], jnb: [28.0, -26.2], dxb: [55.3, 25.2], ruh: [46.7, 24.7],
+    bom: [72.9, 19.1], sin: [103.8, 1.35], hkg: [114.2, 22.3], tyo: [139.7, 35.7],
+    sel: [127.0, 37.6], syd: [151.2, -33.9], mos: [37.6, 55.75], ist: [29.0, 41.0]
+  };
+  var LINKS = [
+    ['nyc', 'lon'], ['nyc', 'sf'], ['nyc', 'tor'], ['sf', 'tyo'], ['sf', 'mex'],
+    ['mex', 'bog'], ['bog', 'sao'], ['sao', 'lag'], ['lon', 'par'], ['par', 'ber'],
+    ['lon', 'mad'], ['mad', 'lag'], ['lag', 'nbo'], ['nbo', 'jnb'], ['cai', 'dxb'],
+    ['ist', 'cai'], ['ber', 'mos'], ['ist', 'dxb'], ['dxb', 'ruh'], ['dxb', 'bom'],
+    ['bom', 'sin'], ['sin', 'hkg'], ['hkg', 'tyo'], ['tyo', 'sel'], ['sin', 'syd'],
+    ['lon', 'dxb'], ['nyc', 'sao'], ['jnb', 'bom'], ['syd', 'sf'], ['mos', 'sel']
+  ];
+
+  var host = document.querySelector('.atlas-globe');
+  var legacy = host && host.querySelector('canvas[data-atlas-globe]');
+  if (!host || !legacy || !window.d3 || !window.topojson) return;
+
+  // Keep the theme's canvas in place (so its script keeps working and the
+  // layout keeps its size) but hide it; draw on our own canvas above it.
+  legacy.style.visibility = 'hidden';
+  if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+  var canvas = document.createElement('canvas');
+  canvas.className = 'atlas-globe-real';
+  canvas.setAttribute('aria-hidden', 'true');
+  host.insertBefore(canvas, legacy.nextSibling);
+  var ctx = canvas.getContext('2d');
+
+  // ---- palette ----
+  function rgba(c, a) { return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')'; }
+
+  // AdVault AI brand palette (from the theme's style.css):
+  // navy #091b2c / #061023 / #083359, teal #0DBFC1, deep teal #0B757A,
+  // slate teal #356B85, mist #BCDBE5, amber #FFC35A.
+  var dark = true;
+  var P = {
+    oceanIn: [16, 52, 72],          // between #173448 and #093c4a
+    oceanOut: [6, 16, 35],          // #061023
+    land: [11, 117, 122],           // #0B757A
+    landHi: [13, 191, 193],         // #0DBFC1
+    landAlpha: 0.9,
+    border: 'rgba(188,219,229,0.28)', // #BCDBE5
+    grid: 'rgba(53,107,133,0.28)',    // #356B85
+    glow: [13, 191, 193],           // #0DBFC1
+    arc: [13, 191, 193],            // #0DBFC1
+    pulse: [255, 195, 90],          // #FFC35A
+    node: [255, 195, 90]            // #FFC35A
+  };
+
+  // ---- geometry ----
+  var projection = d3.geoOrthographic().clipAngle(90).precision(0.4);
+  var path = d3.geoPath(projection, ctx);
+  var graticule = d3.geoGraticule10();
+  var land = null, borders = null, landT0 = 0;
+
+  var rot = [-20, -18, 0];           // start over Europe / Africa / Atlantic
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W = 0, H = 0, R = 0, CX = 0, CY = 0, dpr = 1;
+
+  var arcs = LINKS.map(function (l, i) {
+    var a = CITIES[l[0]], b = CITIES[l[1]];
+    var dist = d3.geoDistance(a, b);  // radians
+    return {
+      interp: d3.geoInterpolate(a, b),
+      lift: Math.min(0.28, 0.06 + dist * 0.09),
+      steps: Math.max(24, Math.round(dist * 40)),
+      speed: 0.00012 + (i % 5) * 0.00002,
+      offset: (i * 0.137) % 1
+    };
+  });
+
+  function resize() {
+    var r = host.getBoundingClientRect();
+    var lr = legacy.getBoundingClientRect();
+    // Match the theme canvas box when it has one, else the host.
+    var box = lr.width > 10 && lr.height > 10 ? lr : r;
+    W = box.width; H = box.height;
+    canvas.style.position = 'absolute';
+    canvas.style.left = (box.left - r.left) + 'px';
+    canvas.style.top = (box.top - r.top) + 'px';
+    canvas.style.width = W + 'px';
+    canvas.style.height = H + 'px';
+    canvas.style.pointerEvents = 'auto';
+    canvas.style.cursor = 'grab';
+    canvas.style.touchAction = 'pan-y';
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    R = Math.min(W, H) / 2 * 0.86;
+    CX = W / 2; CY = H / 2;
+    projection.translate([CX, CY]).scale(R);
+  }
+
+  // Project a lon/lat raised by `h` (fraction of radius) above the surface.
+  var rotator = d3.geoRotation(rot);
+  function project3(lonlat, h) {
+    var p = rotator(lonlat);
+    var lam = p[0] * Math.PI / 180, phi = p[1] * Math.PI / 180;
+    var x = Math.cos(phi) * Math.sin(lam);
+    var y = Math.sin(phi);
+    var z = Math.cos(phi) * Math.cos(lam);
+    var k = 1 + h;
+    var visible = z > 0 || (x * x + y * y) * k * k > 1;
+    return [CX + R * k * x, CY - R * k * y, visible, z];
+  }
+
+  function draw(t) {
+    projection.rotate(rot);
+    rotator = d3.geoRotation(rot);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+
+    // atmosphere glow
+    var g =ctx.createRadialGradient(CX, CY, R * 0.9, CX, CY, R * 1.22);
+    // gentle lighting pulse (~7s cycle, ±12%)
+    var breathe = reduce ? 1 : 1 + 0.12 * Math.sin(t * 0.0009);
+    g.addColorStop(0, rgba(P.glow, (dark ? 0.35 : 0.22) * breathe));
+    g.addColorStop(1, rgba(P.glow, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(CX, CY, R * 1.22, 0, Math.PI * 2); ctx.fill();
+
+    // ocean
+    var o = ctx.createRadialGradient(CX - R * 0.35, CY - R * 0.4, R * 0.1, CX, CY, R);
+    o.addColorStop(0, rgba(P.oceanIn, 1));
+    o.addColorStop(1, rgba(P.oceanOut, 1));
+    ctx.fillStyle = o;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2); ctx.fill();
+
+    // graticule
+    ctx.beginPath(); path(graticule);
+    ctx.strokeStyle = P.grid; ctx.lineWidth = 0.7; ctx.stroke();
+
+    // land + borders
+    if (land) {
+      var lg = ctx.createLinearGradient(CX - R, CY - R, CX + R, CY + R);
+      lg.addColorStop(0, rgba(P.landHi, 1));
+      lg.addColorStop(1, rgba(P.land, 1));
+      ctx.beginPath(); path(land);
+      // continents fade in once the map data arrives (no pop-in)
+      var landFade = reduce || !landT0 ? 1 : Math.min(1, (performance.now() - landT0) / 700);
+      ctx.globalAlpha = P.landAlpha * landFade;
+      ctx.fillStyle = lg; ctx.fill();
+      ctx.globalAlpha = landFade;
+      ctx.beginPath(); path(borders);
+      ctx.strokeStyle = P.border; ctx.lineWidth = 0.6; ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    // terminator-style shading for depth
+    var s = ctx.createRadialGradient(CX - R * 0.4, CY - R * 0.45, R * 0.2, CX, CY, R * 1.02);
+    s.addColorStop(0, 'rgba(255,255,255,' + (dark ? 0.06 : 0.18) + ')');
+    s.addColorStop(0.65, 'rgba(0,0,0,0)');
+    s.addColorStop(1, 'rgba(0,0,0,' + (dark ? 0.45 : 0.18) + ')');
+    ctx.fillStyle = s;
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2); ctx.fill();
+
+    // rim
+    ctx.beginPath(); ctx.arc(CX, CY, R, 0, Math.PI * 2);
+    ctx.strokeStyle = rgba(P.glow, dark ? 0.55 : 0.35); ctx.lineWidth = 1.2; ctx.stroke();
+
+    // arcs + pulses
+    ctx.lineCap = 'round';
+    arcs.forEach(function (a) {
+      var pts = [];
+      for (var i = 0; i <= a.steps; i++) {
+        var f = i / a.steps;
+        pts.push(project3(a.interp(f), Math.sin(Math.PI * f) * a.lift));
+      }
+      ctx.strokeStyle = rgba(P.arc, dark ? 0.55 : 0.6);
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      var pen = false;
+      for (var j = 0; j < pts.length; j++) {
+        if (pts[j][2]) { pen ? ctx.lineTo(pts[j][0], pts[j][1]) : ctx.moveTo(pts[j][0], pts[j][1]); pen = true; }
+        else pen = false;
+      }
+      ctx.stroke();
+
+      if (reduce) return;
+      var head = (t * a.speed + a.offset) % 1;
+      var tail = 0.12;
+      for (var k = 0; k < 8; k++) {
+        var ff = head - (k / 8) * tail;
+        if (ff < 0) continue;
+        var q = project3(a.interp(ff), Math.sin(Math.PI * ff) * a.lift);
+        if (!q[2]) continue;
+        ctx.fillStyle = k === 0 ? rgba(P.pulse, 1) : rgba(P.pulse, 0.85 * (1 - k / 8));
+        ctx.beginPath(); ctx.arc(q[0], q[1], k === 0 ? 2.4 : 1.8 * (1 - k / 10), 0, Math.PI * 2); ctx.fill();
+      }
+    });
+
+    // city nodes
+    Object.keys(CITIES).forEach(function (key, i) {
+      var p = project3(CITIES[key], 0);
+      if (p[3] <= 0) return;
+      var fade = Math.min(1, p[3] * 3);
+      var pulse = reduce ? 0.5 : ((t * 0.0006 + i * 0.21) % 1);
+      ctx.strokeStyle = rgba(P.arc, (1 - pulse) * 0.7 * fade);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(p[0], p[1], 3 + pulse * 9, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = rgba(P.node, fade);
+      ctx.beginPath(); ctx.arc(p[0], p[1], 3.2, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = rgba([255, 255, 255], fade);
+      ctx.beginPath(); ctx.arc(p[0], p[1], 1.4, 0, Math.PI * 2); ctx.fill();
+    });
+  }
+
+  // ---- interaction: drag to spin, auto-rotate otherwise ----
+  var dragging = false, last = null, vel = 0, lastTs = 0, running = true;
+  canvas.addEventListener('pointerdown', function (e) {
+    dragging = true; last = [e.clientX, e.clientY]; vel = 0;
+    canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!dragging) return;
+    var dx = e.clientX - last[0], dy = e.clientY - last[1];
+    last = [e.clientX, e.clientY];
+    var k = 90 / R;
+    rot[0] += dx * k; vel = dx * k;
+    rot[1] = Math.max(-60, Math.min(60, rot[1] - dy * k));
+    if (reduce) draw(0);
+  });
+  function endDrag() { dragging = false; canvas.style.cursor = 'grab'; }
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  function frame(ts) {
+    if (!running) { lastTs = 0; return; }
+    var dt = lastTs ? Math.min(64, ts - lastTs) : 16;
+    lastTs = ts;
+    if (!dragging) {
+      vel *= 0.95;
+      rot[0] += 0.006 * dt + vel;
+    }
+    draw(ts);
+    requestAnimationFrame(frame);
+  }
+
+  function start() {
+    resize();
+    if (reduce) { draw(0); return; }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        var vis = es[0].isIntersecting;
+        if (vis && !running) { running = true; requestAnimationFrame(frame); }
+        running = vis;
+      }).observe(host);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(function () { resize(); if (reduce) draw(0); }).observe(host);
+  } else {
+    window.addEventListener('resize', function () { resize(); if (reduce) draw(0); });
+  }
+
+  // Remove the old theme's thin decorative guide lines (pseudo-elements on the
+  // globe area / signal callout) that no longer line up with the new globe.
+  (function hideGuideLines() {
+    var scope = host.closest('.atlas-hero') || host.parentElement;
+    var els = [host].concat([].slice.call(host.querySelectorAll('*')));
+    var p = host.parentElement;
+    // Walk up to (not including) the hero section, so section dividers stay.
+    while (p && p !== scope && !p.classList.contains('atlas-hero__grid')) { els.push(p); p = p.parentElement; }
+    var css = [], n = 0;
+    els.forEach(function (el) {
+      ['::before', '::after'].forEach(function (pseudo) {
+        var cs = getComputedStyle(el, pseudo);
+        if (!cs || cs.content === 'none' || cs.content === 'normal' || cs.display === 'none') return;
+        var w = parseFloat(cs.width) || 0, h = parseFloat(cs.height) || 0;
+        var bt = parseFloat(cs.borderTopWidth) || 0, bl = parseFloat(cs.borderLeftWidth) || 0;
+        var thin = (w > 20 && h <= 3) || (h > 20 && w <= 3) ||
+                   (h === 0 && bt > 0 && w > 20) || (w === 0 && bl > 0 && h > 20);
+        if (!thin) return;
+        var id = 'agl' + (n++);
+        el.setAttribute('data-' + id, '');
+        css.push('[data-' + id + ']' + pseudo + '{display:none!important}');
+        if (window.console) console.info('[atlas-globe] hid guide line:', el.className || el.tagName, pseudo, w + 'x' + h);
+      });
+    });
+    if (css.length) {
+      var st = document.createElement('style');
+      st.id = 'atlas-globe-hide-lines';
+      st.textContent = css.join('\n');
+      document.head.appendChild(st);
+    }
+  })();
+
+  start();
+  fetch(WORLD_URL).then(function (r) { return r.json(); }).then(function (world) {
+    land = topojson.feature(world, world.objects.land);
+    landT0 = performance.now();
+    borders = topojson.mesh(world, world.objects.countries, function (a, b) { return a !== b; });
+    if (reduce) draw(0);
+  }).catch(function () { /* globe still renders ocean, grid, arcs and nodes */ });
+})();
+</script>
+<script id="atlas-motion-js">
+/*
+ * Cluster Atlas — motion & interaction layer
+ *  1. Once-only scroll reveals (single IntersectionObserver, batched stagger)
+ *  2. Cluster card selection → right-hand panel (uses each card's real content)
+ *  3. Panel image load state (shimmer only while genuinely loading)
+ *  4. Dropdown keyboard support (Escape closes, focus returns to trigger)
+ */
+(function () {
+  'use strict';
+  window.__amBoot = true;
+
+  var root = document.documentElement;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = window.matchMedia && matchMedia('(max-width: 767px)').matches;
+  var STAGGER = narrow ? 60 : 90;   // ms between items revealed together
+  var MAX_STAGGER_STEPS = 8;
+
+  /* ------------------------------------------------------------------
+     1. Scroll reveals
+     ------------------------------------------------------------------ */
+  function mark(sel, extraClass) {
+    [].forEach.call(document.querySelectorAll(sel), function (el) {
+      el.classList.add('am-item');
+      if (extraClass) el.classList.add(extraClass);
+    });
+  }
+
+  if (root.classList.contains('am-ready') && 'IntersectionObserver' in window) {
+    // Desktop (cards arranged around the hub): cards emerge from behind the
+    // 43 hub and travel out to their places. Other layouts: normal fade-up.
+    var amMap = document.querySelector('.atlas-lp .atlas-map');
+    var amHub = amMap && amMap.querySelector('.atlas-hub');
+    var emerge = !!(amMap && amHub && window.matchMedia('(min-width: 1024px)').matches);
+    if (emerge) setupEmerge(amMap, amHub);
+    else {
+      mark('.atlas-lp .atlas-map .atlas-window');
+      mark('.atlas-lp .atlas-hub', 'am-item--scale');
+    }
+    mark('.atlas-lp .atlas-explorer');
+    mark('.atlas-lp .pf__intro');
+    mark('.atlas-lp .pf__step');
+    mark('.atlas-lp .pf__benefits');
+    mark('footer > .container');
+
+    var io = new IntersectionObserver(function (entries) {
+      var batch = entries.filter(function (e) { return e.isIntersecting; })
+        .map(function (e) { return e.target; })
+        .sort(function (a, b) {
+          return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+        });
+      batch.forEach(function (el, i) {
+        var d = Math.min(i, MAX_STAGGER_STEPS) * STAGGER;
+        // the panel enters a beat after the cards around it
+        // (on desktop it waits until the cards have started fanning out)
+        if (el.classList.contains('atlas-explorer')) d += emerge ? 450 : 120;
+        el.style.setProperty('--am-delay', d + 'ms');
+        el.classList.add('am-in');
+        io.unobserve(el);   // once only — never replays on scroll
+        var done = function (ev) {
+          if (ev && ev.target !== el) return;
+          el.classList.add('am-done');
+          el.removeEventListener('transitionend', done);
+        };
+        el.addEventListener('transitionend', done);
+        setTimeout(done, d + 1300);  // safety net if transitionend never fires
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    [].forEach.call(document.querySelectorAll('.am-item'), function (el) { io.observe(el); });
+  }
+
+  function setupEmerge(mapEl, hubEl) {
+    var cards = [].slice.call(mapEl.querySelectorAll('.atlas-window'));
+    mapEl.classList.add('am-emerge');   // cards now sit hidden & shrunk at their own spot
+
+    // Offset from each card's centre to the hub's centre (scale is centred,
+    // so centres are unaffected by the initial shrink).
+    function measure() {
+      if (mapEl.classList.contains('am-emerge-in')) return;
+      var h = hubEl.getBoundingClientRect();
+      var hx = h.left + h.width / 2, hy = h.top + h.height / 2;
+      cards.forEach(function (c) {
+        var r = c.getBoundingClientRect();
+        c.style.setProperty('--am-fx', (hx - (r.left + r.width / 2)).toFixed(1) + 'px');
+        c.style.setProperty('--am-fy', (hy - (r.top + r.height / 2)).toFixed(1) + 'px');
+      });
+    }
+    measure();
+    window.addEventListener('resize', measure);
+
+    var mio = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      mio.disconnect();
+      measure();
+      cards.forEach(function (c, i) {
+        c.style.setProperty('--am-delay', (320 + i * 70) + 'ms');  // hub first, then cards
+      });
+      void mapEl.offsetWidth;
+      mapEl.classList.add('am-emerge-in');
+      // Once landed, drop the long reveal transition so hover feels instant.
+      setTimeout(function () {
+        mapEl.classList.add('am-emerge-done');
+        window.removeEventListener('resize', measure);
+      }, 320 + cards.length * 70 + 1100);
+    }, { threshold: 0.2 });
+    mio.observe(mapEl);
+  }
+
+  /* ------------------------------------------------------------------
+     1b. Hub → card connector lines: endless data-transfer animation
+     Lines are in the same order as the cards around the hub
+     (TL, T, TR, L, R, BL, B, BR), so line i feeds card i.
+     ------------------------------------------------------------------ */
+  (function wires() {
+    var svg = document.querySelector('.atlas-lp .atlas-wires');
+    if (!svg) return;
+    var lines = [].slice.call(svg.querySelectorAll('line'));
+    var cards = [].slice.call(document.querySelectorAll('.atlas-lp .atlas-map .atlas-window'));
+    var NS = 'http://www.w3.org/2000/svg';
+
+    // Base dashes drift outward: shift by exactly one dash cycle → seamless loop.
+    lines.forEach(function (ln) {
+      var da = getComputedStyle(ln).strokeDasharray;
+      if (!da || da === 'none') return;
+      var parts = da.split(/[\s,]+/).map(parseFloat).filter(function (n) { return !isNaN(n); });
+      if (parts.length % 2) parts = parts.concat(parts);
+      var cycle = parts.reduce(function (a, b) { return a + b; }, 0);
+      if (!cycle) return;
+      ln.style.setProperty('--am-dash-cycle', cycle + 'px');
+      ln.style.setProperty('--am-dash-speed', Math.max(1.5, cycle / 4) + 's');  // slow, calm drift
+      ln.classList.add('am-dashed');
+    });
+
+    if (reduce) return;
+
+    // One travelling packet per line, coloured like its destination card.
+    var packets = lines.map(function (ln, i) {
+      var p = document.createElementNS(NS, 'line');
+      ['x1', 'y1', 'x2', 'y2'].forEach(function (a) { p.setAttribute(a, ln.getAttribute(a)); });
+      p.setAttribute('class', 'am-packet');
+      var card = cards[i];
+      var col = card && getComputedStyle(card).getPropertyValue('--cat').trim();
+      if (col) p.style.setProperty('--am-pk-color', col);
+      svg.appendChild(p);
+      return p;
+    });
+
+    // Packet dash lengths are in screen px (non-scaling stroke) → measure lines.
+    function measure() {
+      var r = svg.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      packets.forEach(function (p) {
+        var dx = (p.x2.baseVal.value - p.x1.baseVal.value) * r.width / 100;
+        var dy = (p.y2.baseVal.value - p.y1.baseVal.value) * r.height / 100;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        p.style.setProperty('--am-len', len.toFixed(1) + 'px');
+      });
+    }
+    measure();
+    if ('ResizeObserver' in window) new ResizeObserver(measure).observe(svg);
+    else window.addEventListener('resize', measure);
+  })();
+
+  /* ------------------------------------------------------------------
+     2. Card selection → panel
+     First click on a card selects it and shows its theme in the panel;
+     clicking the selected card again (or Ctrl/⌘/middle-click) opens its
+     page as before. The panel CTA links to the selected theme's page.
+     ------------------------------------------------------------------ */
+  var map = document.querySelector('.atlas-lp .atlas-map');
+  var panel = document.querySelector('.atlas-lp .atlas-explorer');
+  var cluster = panel && panel.querySelector('.atlas-explorer__cluster');
+  if (map && cluster) {
+    var cards = [].slice.call(map.querySelectorAll('.atlas-window'));
+    var chip = cluster.querySelector('.atlas-chip');
+    var title = cluster.querySelector('h2');
+    var text = panel.querySelector('.atlas-explorer__text');
+    var cta = panel.querySelector('.atlas-explorer__cta');
+
+    cluster.setAttribute('aria-live', 'polite');
+    cards.forEach(function (c) { c.setAttribute('aria-controls', 'atlas-explorer'); });
+
+    function cardData(card, index) {
+      var t = card.querySelector('.atlas-window__title');
+      var d = card.querySelector('.atlas-window__text');
+      var list = card.querySelectorAll('.atlas-window__list > span');
+      var n = card.querySelector('.atlas-window__foot .marker-num');
+      var desc = d ? d.textContent.trim()
+        : [].map.call(list, function (s) { return s.textContent.trim(); }).join(', ') + '.';
+      return {
+        chip: 'Theme ' + (index + 1) + ' of ' + cards.length + (n ? ' · ' + n.textContent.trim() : ''),
+        title: t ? t.textContent.trim() : '',
+        text: desc,
+        href: card.getAttribute('href')
+      };
+    }
+
+    var swapTimer = null;
+    function render(data) {
+      if (chip) chip.textContent = data.chip;
+      if (title) title.textContent = data.title;
+      if (text) text.textContent = data.text;
+      if (cta && data.href) cta.setAttribute('href', data.href);
+    }
+
+    function select(card) {
+      var data = cardData(card, cards.indexOf(card));
+      cards.forEach(function (c) {
+        var on = c === card;
+        c.classList.toggle('is-selected', on);
+        if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current');
+      });
+
+      // Hold the current height so the swap never shifts the layout.
+      cluster.style.minHeight = cluster.offsetHeight + 'px';
+
+      if (reduce) { render(data); }
+      else {
+        clearTimeout(swapTimer);
+        cluster.classList.remove('am-swap-in');
+        cluster.classList.add('am-out');
+        swapTimer = setTimeout(function () {
+          render(data);
+          cluster.classList.remove('am-out');
+          void cluster.offsetWidth;            // restart the feature stagger
+          cluster.classList.add('am-swap-in');
+        }, 180);
+      }
+
+      // When the panel is off-screen (stacked layouts), bring it into view.
+      var r = panel.getBoundingClientRect();
+      if (r.top > window.innerHeight * 0.75 || r.bottom < 0) {
+        panel.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      }
+    }
+
+    map.addEventListener('click', function (e) {
+      var card = e.target.closest('.atlas-window');
+      if (!card) return;
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (card.classList.contains('is-selected')) return; // second click → navigate
+      e.preventDefault();
+      select(card);
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     2b. Process timeline — plays ONCE when the section appears:
+     steps "load" one after another (track fills, step fills, its benefit
+     lights up) until the last step, then stops in the completed state.
+     ------------------------------------------------------------------ */
+  (function processFlow() {
+    var flow = document.querySelector('.atlas-lp .pf');
+    if (!flow) return;
+    var steps = [].slice.call(flow.querySelectorAll('.pf__step'));
+    var benefits = [].slice.call(flow.querySelectorAll('.pf__benefit'));
+    var n = steps.length;
+    if (!n) return;
+    var STEP_MS = 900;          // time per step while loading
+    var START_DELAY = 0;        // start the moment the section appears
+
+    function setStep(k) {       // k = step currently loading (-1 = none)
+      steps.forEach(function (s, i) {
+        s.classList.toggle('is-done', i < k);
+        s.classList.toggle('is-active', i === k);
+      });
+      benefits.forEach(function (b, i) { b.classList.toggle('is-active', i <= k); });
+    }
+    function complete() {
+      steps.forEach(function (s) { s.classList.remove('is-active'); s.classList.add('is-done'); });
+      benefits.forEach(function (b) { b.classList.add('is-active'); });
+      flow.style.setProperty('--pf-progress', 1);
+      flow.classList.add('pf--complete');
+    }
+
+    if (reduce) { flow.classList.add('am-flow-in'); complete(); return; }
+
+    setStep(-1);
+    function play() {
+      flow.classList.add('am-flow-in');
+      // The line starts moving immediately and fills continuously; each step
+      // loads exactly when the fill reaches it.
+      flow.style.setProperty('--pf-fill-dur', ((n - 1) * STEP_MS) + 'ms');
+      var k = 0;
+      setTimeout(function tick() {
+        setStep(k);
+        if (k === 0) flow.style.setProperty('--pf-progress', 1);   // run the whole line now
+        if (k >= n - 1) { setTimeout(complete, STEP_MS); return; }
+        k++;
+        setTimeout(tick, STEP_MS);
+      }, START_DELAY);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var pio = new IntersectionObserver(function (es) {
+        if (!es[0].isIntersecting) return;
+        pio.disconnect();       // once only
+        play();
+      }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });  // as soon as the steps enter view
+      pio.observe(flow.querySelector('.pf__steps') || flow);
+    } else { play(); }
+  })();
+
+  /* ------------------------------------------------------------------
+     3. Panel image — shimmer only if it is actually still loading
+     ------------------------------------------------------------------ */
+  [].forEach.call(document.querySelectorAll('.atlas-explorer__media'), function (box) {
+    var img = box.querySelector('img');
+    if (!img || (img.complete && img.naturalWidth)) return;
+    box.classList.add('am-loading');
+    var clear = function () { box.classList.remove('am-loading'); };
+    img.addEventListener('load', clear, { once: true });
+    img.addEventListener('error', clear, { once: true });
+  });
+
+  /* ------------------------------------------------------------------
+     4. Dropdowns — Escape closes the open menu via the theme's own toggle
+     ------------------------------------------------------------------ */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var open = document.querySelector('[id^="clusterDropdown-"]:not(.hidden)');
+    if (!open) return;
+    var n = open.id.split('-').pop();
+    var toggle = document.querySelector('[data-dropdown="' + n + '"]');
+    if (toggle) { toggle.click(); toggle.focus(); }
+  });
+})();
+</script>
             </body>
 </html>
