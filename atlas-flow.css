@@ -1,0 +1,285 @@
+/* ==========================================================================
+   "From Market Discovery to Campaign Blueprint" — process section (.pf)
+   Own class names, so the theme's .atlas-flow rules don't interfere.
+   Desktop : 4-step timeline on a progress track + aligned benefits strip.
+   Tablet  : 2 columns, track hidden.   Mobile: 1 column.
+   Active step is driven by atlas-motion.js (.is-active / .is-done,
+   --pf-progress 0…1 on .pf).
+   ========================================================================== */
+
+.atlas-lp .pf {
+  --pf-disc: 64px;
+  --pf-gap: 24px;
+  --pf-pad: 14px;
+  --pf-brand: var(--atlas-brand, #0dbfc1);
+  --pf-brand-deep: var(--atlas-brand-hover, #0b757a);
+  --pf-ink: var(--atlas-heading, #081b1b);
+  --pf-muted: var(--atlas-body, #206d6e);
+  --pf-line: var(--atlas-line, #d6e9e9);
+  --pf-soft: var(--atlas-soft, #dff6f6);
+  --pf-progress: 0;
+  padding: 8px 0;
+}
+/* low-specificity list reset so it never overrides the component margins */
+:where(.atlas-lp .pf) :where(ol, ul) { list-style: none; margin: 0; padding: 0; }
+
+/* ---------- Intro ---------- */
+.atlas-lp .pf__intro {
+  max-width: 720px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+.atlas-lp .pf__intro h2 {
+  margin: 0 0 10px;
+  color: var(--pf-ink);
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.atlas-lp .pf__intro p {
+  margin: 0;
+  color: var(--pf-muted);
+  font-size: 16px;
+}
+
+/* ---------- Steps ---------- */
+.atlas-lp .pf__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-gap);
+  padding: 0 var(--pf-pad);
+}
+.atlas-lp .pf__step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  cursor: default;
+}
+.atlas-lp .pf__disc {
+  display: grid;
+  place-items: center;
+  width: var(--pf-disc);
+  height: var(--pf-disc);
+  margin-bottom: 8px;
+  border-radius: 50%;
+  border: 2px solid var(--pf-line);
+  background: #fff;
+  color: var(--pf-brand-deep);
+  box-shadow: 0 0 0 6px #fff;            /* masks the track behind the disc */
+  transition: background .4s ease, color .4s ease, border-color .4s ease, scale .25s ease;
+}
+.atlas-lp .pf__disc .atlas-ico { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.atlas-lp .pf__num {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--pf-soft);
+  color: var(--pf-brand-deep);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  line-height: 1.5;
+  transition: background .4s ease, color .4s ease;
+}
+.atlas-lp .pf__title {
+  color: var(--pf-ink);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.atlas-lp .pf__text {
+  max-width: 230px;
+  color: var(--pf-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Track: centre of step 1 → centre of step 4; fill scales to active step */
+.atlas-lp .pf__track {
+  position: absolute;
+  z-index: 0;
+  top: calc(var(--pf-disc) / 2 - 2px);
+  left:  calc(var(--pf-pad) + (100% - 2 * var(--pf-pad) - 3 * var(--pf-gap)) / 8);
+  right: calc(var(--pf-pad) + (100% - 2 * var(--pf-pad) - 3 * var(--pf-gap)) / 8);
+  height: 4px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(90deg, var(--pf-line) 0 8px, transparent 8px 14px);
+  transform-origin: left center;
+  transition: transform .6s cubic-bezier(.16, 1, .3, 1);
+}
+.atlas-lp .pf__fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* the line shifts colour from step to step */
+  background: linear-gradient(90deg, #E6A34D 0%, #8B7CF6 33.3%, #438FE8 66.6%, #65B98A 100%);
+  /* revealed (not squeezed) so each colour stays under its own step */
+  clip-path: inset(0 calc(100% - var(--pf-progress) * 100%) 0 0 round 4px);
+  /* constant speed so the fill reaches each step exactly as it loads */
+  transition: clip-path var(--pf-fill-dur, 2.7s) linear;
+}
+.am-ready .atlas-lp .pf:not(.am-flow-in) .pf__track { transform: scaleX(0); }
+
+/* ---------- Per-step colour (step + its benefit share it) ----------
+   01 amber/orange · 02 violet · 03 blue · 04 green  (AdVault palette)
+   --pf-brand = base hue, --pf-brand-deep = darker shade (text on white,
+   gradient end), --pf-soft = light tint. */
+.atlas-lp .pf [data-pf-i="0"] { --pf-brand: #E6A34D; --pf-brand-deep: #9A6420; }
+.atlas-lp .pf [data-pf-i="1"] { --pf-brand: #8B7CF6; --pf-brand-deep: #5546C8; }
+.atlas-lp .pf [data-pf-i="2"] { --pf-brand: #438FE8; --pf-brand-deep: #1F5FAE; }
+.atlas-lp .pf [data-pf-i="3"] { --pf-brand: #65B98A; --pf-brand-deep: #2F7A52; }
+.atlas-lp .pf [data-pf-i] { --pf-soft: color-mix(in srgb, var(--pf-brand) 14%, #fff); }
+
+/* idle step already hints its colour */
+.atlas-lp .pf__step .pf__disc { border-color: color-mix(in srgb, var(--pf-brand) 35%, #fff); }
+
+/* Loaded (done) + loading (active) states — loaded steps stay filled */
+.atlas-lp .pf__step.is-done .pf__disc {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pf-brand) 0%, var(--pf-brand-deep) 100%);
+  color: #fff;
+}
+.atlas-lp .pf__step.is-done .pf__num { background: var(--pf-brand-deep); color: #fff; }
+@keyframes pf-ring {
+  0%   { box-shadow: 0 0 0 6px #fff, 0 0 0 6px color-mix(in srgb, var(--pf-brand) 40%, transparent); }
+  100% { box-shadow: 0 0 0 6px #fff, 0 0 0 18px color-mix(in srgb, var(--pf-brand) 0%, transparent); }
+}
+.atlas-lp .pf__step.is-active .pf__disc {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--pf-brand) 0%, var(--pf-brand-deep) 100%);
+  color: #fff;
+  animation: pf-ring 1.8s ease-out infinite;
+}
+.atlas-lp .pf__step.is-active .pf__num { background: var(--pf-brand-deep); color: #fff; }
+
+/* ---------- Benefits strip ---------- */
+.atlas-lp .pf__benefits {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--pf-gap);
+  margin-top: 44px;
+  padding: var(--pf-pad);
+  border: 1px solid var(--pf-line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f4fcfc 0%, var(--pf-soft) 100%);
+}
+.atlas-lp .pf__benefit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition: background .4s ease, border-color .4s ease, box-shadow .4s ease, translate .4s ease;
+}
+/* dashed connector from each step down into its benefit */
+.atlas-lp .pf__benefit::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(-44px - var(--pf-pad) + 8px);
+  height: 30px;
+  border-left: 2px dashed var(--pf-line);
+  transition: border-color .4s ease;
+}
+.atlas-lp .pf__bicon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--pf-brand-deep);
+  box-shadow: 0 4px 12px -6px rgba(8, 27, 27, .25);
+  transition: background .4s ease, color .4s ease;
+}
+.atlas-lp .pf__bicon .atlas-ico { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.atlas-lp .pf__btext { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.atlas-lp .pf__btext b {
+  color: var(--pf-brand-deep);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+.atlas-lp .pf__btext span {
+  margin-top: 3px;
+  color: var(--pf-ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+/* a benefit lights up when its step has loaded, and stays lit */
+.atlas-lp .pf__benefit.is-active {
+  background: #fff;
+  border-color: color-mix(in srgb, var(--pf-brand) 35%, #fff);
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--pf-brand-deep) 60%, transparent);
+}
+.atlas-lp .pf__benefit.is-active::before { border-color: var(--pf-brand); }
+.atlas-lp .pf__benefit.is-active .pf__bicon { background: var(--pf-brand); color: #fff; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1023px) {
+  .atlas-lp .pf__intro { margin-bottom: 36px; }
+  .atlas-lp .pf { --pf-row-gap: 32px; }
+  .atlas-lp .pf__steps,
+  .atlas-lp .pf__benefits { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--pf-row-gap); }
+  .atlas-lp .pf__track,
+  .atlas-lp .pf__benefit::before { display: none; }
+  .atlas-lp .pf__benefits { row-gap: var(--pf-gap); }
+}
+/* ---------- Mobile ---------- */
+@media (max-width: 639px) {
+  .atlas-lp .pf { --pf-disc: 52px; }
+  .atlas-lp .pf__steps { grid-template-columns: minmax(0, 1fr); padding: 0; }
+  .atlas-lp .pf__step {
+    display: grid;
+    grid-template-columns: var(--pf-disc) 1fr;
+    column-gap: 16px;
+    row-gap: 4px;
+    align-items: start;
+    text-align: left;
+  }
+  .atlas-lp .pf__disc { grid-row: 1 / span 3; margin: 0; }
+  .atlas-lp .pf__num { justify-self: start; }
+
+  /* Vertical timeline: a segment from each icon down to the next icon.
+     ::after = dashed base line, ::before = colour fill that grows downward
+     while the step loads (same 0.9s as a step in atlas-motion.js). */
+  .atlas-lp .pf__step:not(:last-child)::after,
+  .atlas-lp .pf__step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: calc(var(--pf-disc) / 2 - 1.5px);
+    top: calc(var(--pf-disc) / 2);
+    width: 3px;
+    height: calc(100% + var(--pf-row-gap));
+    border-radius: 3px;
+  }
+  .atlas-lp .pf__step:not(:last-child)::after {
+    background: repeating-linear-gradient(180deg, var(--pf-line) 0 7px, transparent 7px 12px);
+  }
+  .atlas-lp .pf__step:not(:last-child)::before {
+    z-index: 0;
+    background: linear-gradient(180deg, var(--pf-brand), color-mix(in srgb, var(--pf-brand) 55%, #fff));
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform .9s linear;
+  }
+  .atlas-lp .pf__step.is-active:not(:last-child)::before,
+  .atlas-lp .pf__step.is-done:not(:last-child)::before { transform: none; }
+  /* keep the disc above its own fill segment */
+  .atlas-lp .pf__step .pf__disc { position: relative; z-index: 1; }
+  .atlas-lp .pf__text { max-width: none; }
+  .atlas-lp .pf__benefits { grid-template-columns: minmax(0, 1fr); margin-top: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-lp .pf__step.is-active .pf__disc { animation: none; }
+  .atlas-lp .pf__track, .atlas-lp .pf__fill, .atlas-lp .pf__step::before { transition: none; }
+}

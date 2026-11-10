@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Cluster Atlas — per-category colours for the 8 intelligence cluster cards.
+   Load AFTER cluster-atlas.css. Colour only: no layout/size/type changes.
+   --cat       base hue
+   --cat-deep  darker shade of the same hue (gradient start)
+   ========================================================================== */
+
+.atlas-lp a.atlas-window[href*="consumer-markets-commerce"]      { --cat: #E6A34D; --cat-deep: #9A6420; } /* warm amber  */
+.atlas-lp a.atlas-window[href*="health-care-life-sciences"]      { --cat: #65B98A; --cat-deep: #2F7A52; } /* fresh green */
+.atlas-lp a.atlas-window[href*="technology-connected"]           { --cat: #8B7CF6; --cat-deep: #5546C8; } /* violet      */
+.atlas-lp a.atlas-window[href*="enterprise-finance-risk"]        { --cat: #438FE8; --cat-deep: #1F5FAE; } /* blue        */
+.atlas-lp a.atlas-window[href*="industry-energy-resources"]      { --cat: #D47CB6; --cat-deep: #974078; } /* rose        */
+.atlas-lp a.atlas-window[href*="mobility-logistics-places"]      { --cat: #E77F78; --cat-deep: #AE4740; } /* coral       */
+.atlas-lp a.atlas-window[href*="culture-media-experiences"]      { --cat: #D47CB6; --cat-deep: #974078; } /* pink        */
+.atlas-lp a.atlas-window[href*="agriculture-animals-production"] { --cat: #85AD62; --cat-deep: #4F6E32; } /* olive green */
+
+/* Header: one clean diagonal gradient in the card's own hue
+   (replaces the dark-teal header fill; no overlay layer). */
+.atlas-lp .atlas-window__media {
+  background: linear-gradient(135deg, var(--cat-deep) 0%, var(--cat) 100%);
+}
+.atlas-lp .atlas-window__art { color: #fff; }
+
+/* Icon square: solid category colour, white icon */
+.atlas-lp .atlas-window__badge {
+  background: linear-gradient(135deg, var(--cat) 0%, var(--cat-deep) 100%);
+  border-color: transparent;
+  color: #fff;
+}
+
+.atlas-lp .atlas-window__art .atlas-ico,
+.atlas-lp .atlas-window__badge .atlas-ico { stroke: currentColor; }
+
+/* ==========================================================================
+   Hero "Built for" list — same treatment: coloured plate, white icon
+   ========================================================================== */
+.atlas-lp .atlas-built li:nth-child(1) { --cat: #E6A34D; --cat-deep: #9A6420; } /* Performance Marketers      — amber  */
+.atlas-lp .atlas-built li:nth-child(2) { --cat: #8B7CF6; --cat-deep: #5546C8; } /* SaaS Founders & Developers — violet */
+.atlas-lp .atlas-built li:nth-child(3) { --cat: #D47CB6; --cat-deep: #974078; } /* Brands & Marketing Teams   — pink   */
+.atlas-lp .atlas-built li:nth-child(4) { --cat: #438FE8; --cat-deep: #1F5FAE; } /* Advertising Agencies       — blue   */
+.atlas-lp .atlas-built li:nth-child(5) { --cat: #65B98A; --cat-deep: #2F7A52; } /* Consultants & Freelancers  — green  */
+
+.atlas-lp .atlas-built .icon-plate {
+  background: linear-gradient(135deg, var(--cat) 0%, var(--cat-deep) 100%);
+  border-color: transparent;
+  color: #fff;
+}
+.atlas-lp .atlas-built .icon-plate .atlas-ico { stroke: currentColor; }
